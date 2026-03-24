@@ -1,46 +1,60 @@
-# Getting Started with Create React App
+# SpeerCheck — Live Interview Scheduler
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A frontend interview scheduling tool for Speer recruiters. Built with **React + TypeScript**, featuring a weekly calendar, availability overlap detection, engineer filtering, and session-locked slots.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+### Core (Required)
+- **Weekly calendar** — Mon–Fri, 9 AM–6 PM, 30-minute slot grid
+- **3 engineers** with unique availability windows, color-coded
+- **Candidate availability** fetched from [dummyjson.com/users](https://dummyjson.com/users) (real API)
+- **Overlap highlighting** — green cells where candidate + ≥1 engineer are both free
+- **Click-to-schedule** — opens a confirmation modal with engineer/candidate/time
+- **Success toast** with full interview details after confirmation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Senior-Level (All Optional Requirements Included)
+- **Engineer filter** — sidebar buttons to narrow the calendar to a single engineer
+- **Session-locked slots** — scheduled slots lock red for that candidate for the session
+- **Duration selector** — 15, 30, or 60-minute slot lengths; logic recalculates live
+- **API integration** — candidate list pulled from dummyjson REST API
+- **37 passing tests** — unit tests covering all availability logic + integration tests
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+## Design Decisions
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Aesthetic
+Dark editorial theme with deep navy/charcoal base (`#0f0f13`), purple accent (`#7c6bff`), green for overlap slots. Uses **DM Sans** (body) and **Syne** (headings) for a premium recruiter-tool feel.
 
-### `npm run build`
+### Architecture
+```
+src/
+├── types/          # Shared TypeScript interfaces
+├── data/           # Static engineer availability
+├── utils/
+│   ├── availability.ts       # Pure availability logic functions
+│   └── availability.test.ts  # 29 unit tests
+├── hooks/
+│   └── useCandidates.ts      # dummyjson API fetch hook
+└── components/
+    ├── CalendarGrid.tsx
+    ├── EngineerPanel.tsx
+    ├── ConfirmModal.tsx
+    └── SuccessToast.tsx
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Availability Overlap Logic
+`computeOverlapSlots()` returns a `SlotStatus[]` for every slot in the week with `candidateAvailable`, `engineerIds[]`, `isOverlap`, and `isLocked` flags. Duration-awareness is built into `isSlotInRange`: a 60-min slot at 16:30 fails if the engineer window ends at 17:00 (16:30 + 60 = 17:30 > 17:00).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Running Locally
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+npm install
+npm start          # localhost:3000
+npm test           # 37 tests
+npm run build      # production build
+```
