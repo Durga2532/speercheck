@@ -3,7 +3,7 @@ import { Engineer } from "../types";
 export const ENGINEERS: Engineer[] = [
   {
     id: 'eng-1',
-    name: 'Alex Rivera',
+    name: 'Alexra Rivera',
     role: 'Senior Software Engineer',
     color: '#6366f1',
     availability: [
